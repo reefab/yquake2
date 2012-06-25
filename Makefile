@@ -28,11 +28,11 @@
 # for the background music and doesn't add any further
 # dependencies. It should work on all platforms where
 # CD playback is supported by SDL.
-WITH_CDA := yes
+WITH_CDA := no
 
 # OpenGL ES instead of "normal" OpenGL. This implies
 # WITH_STATICQGL and WITH_VERTEXARRAYS.
-WITH_GLES := no
+WITH_GLES := yes
 
 # Enables OGG/Vorbis support. OGG/Vorbis files can be
 # used as a substitute of CD audio playback. Adds
@@ -91,6 +91,9 @@ CAANOO := no
 # The GamePark Wiz
 WIZ := no
 
+# Raspberry PI
+PI := yes
+
 # ------------------------------------------------------ #
 
 # Those variables can be filled to configure the build
@@ -119,7 +122,7 @@ ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/amd64/x86_64/)
 
 # Refuse all other platforms as a firewall against PEBKAC
 # (You'll need some #ifdef for your unsupported  plattform!)
-ifeq ($(findstring $(ARCH), i386 x86_64 sparc64),)
+ifeq ($(findstring $(ARCH), i386 x86_64 sparc64 armv6l),)
 $(error arch $(ARCH) is currently not supported)
 endif
 
@@ -175,6 +178,12 @@ WITH_STATICQGL = yes
 CFLAGS += -DWIZ -DUSE_EGL_RAW
 endif
 
+ifeq ($(PI),yes)
+WITH_GLES = yes
+WITH_STATICQGL = yes
+CFLAGS += -DUSE_EGL_SDL -DUSE_VCHIQ_ARM
+endif
+
 # ----------
 
 # Extra CFLAGS for SDL
@@ -206,6 +215,8 @@ else ifeq ($(CAANOO),yes)
 INCLUDE := -I/usr/include -I$(PREFIX)/DGE/include -I$(PREFIX)/DGE/include/SDL
 else ifeq ($(WIZ),yes) 
 INCLUDE := -I/usr/include -I$(PREFIX)/include -I$(PREFIX)/include/SDL
+else ifeq ($(PI),yes)
+INCLUDE := -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include -I/usr/include
 else # Normal Linux
 INCLUDE := -I/usr/include
 endif
@@ -223,6 +234,8 @@ else ifeq ($(CAANOO),yes)
 LDFLAGS := -L$(PREFIX)/DGE/lib/target -lSDL -lm -ldl
 else ifeq ($(WIZ),yes)
 LDFLAGS := -L$(PREFIX)/lib -lSDL -lm -ldl
+else ifeq ($(PI),yes)
+LDFLAGS := -L/opt/vc/lib -L/usr/lib -lm -ldl -lGLESv2 -lEGL -lvcos -lvchiq_arm
 else # Normal Linux
 LDFLAGS := -L/usr/lib -lm -ldl
 endif
