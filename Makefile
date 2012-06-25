@@ -37,12 +37,12 @@ WITH_GLES := yes
 # Enables OGG/Vorbis support. OGG/Vorbis files can be
 # used as a substitute of CD audio playback. Adds
 # dependencies to libogg, libvorbis and libvorbisfile.
-WITH_OGG := yes
+WITH_OGG := no
 
 # Enables the optional OpenAL sound system.
 # To use it your system needs libopenal.so.1 (we 
 # recommend openal-soft) installed
-WITH_OPENAL := yes
+WITH_OPENAL := no
 
 # Enables retexturing support. Adds a dependency to
 # libjpeg
@@ -181,7 +181,7 @@ endif
 ifeq ($(PI),yes)
 WITH_GLES = yes
 WITH_STATICQGL = yes
-CFLAGS += -DUSE_EGL_SDL -DUSE_VCHIQ_ARM
+CFLAGS += -DUSE_EGL_RAW -DUSE_VCHIQ_ARM -DUSE_GLES2
 endif
 
 # ----------
@@ -235,7 +235,7 @@ LDFLAGS := -L$(PREFIX)/DGE/lib/target -lSDL -lm -ldl
 else ifeq ($(WIZ),yes)
 LDFLAGS := -L$(PREFIX)/lib -lSDL -lm -ldl
 else ifeq ($(PI),yes)
-LDFLAGS := -L/opt/vc/lib -L/usr/lib -lm -ldl -lGLESv2 -lEGL -lvcos -lvchiq_arm
+LDFLAGS := -L/opt/vc/lib -L/usr/lib -lm -ldl -lGLESv2 -lEGL -lvcos -lvchiq_arm -lSDL
 else # Normal Linux
 LDFLAGS := -L/usr/lib -lm -ldl
 endif
@@ -600,6 +600,9 @@ else ifeq ($(CAANOO),yes)
 OPENGL_OBJS_ += \
 	src/egl/eglport.o src/egl/in_gph.o
 else ifeq ($(WIZ),yes)
+OPENGL_OBJS_ += \
+	src/egl/eglport.o src/egl/in_gph.o
+else ifeq ($(PI),yes)
 OPENGL_OBJS_ += \
 	src/egl/eglport.o src/egl/in_gph.o
 else # Normal OpenGL ES
