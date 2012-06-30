@@ -181,7 +181,7 @@ endif
 ifeq ($(PI),yes)
 WITH_GLES = yes
 WITH_STATICQGL = yes
-CFLAGS += -DUSE_EGL_RAW -DUSE_VCHIQ_ARM -DUSE_GLES2
+CFLAGS += -DUSE_EGL_RAW -DUSE_VCHIQ_ARM -DUSE_GLES2 -DPI
 endif
 
 # ----------

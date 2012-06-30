@@ -48,6 +48,10 @@
 int fbdev = -1;
 #endif
 
+#if defined(PI)
+#include "bcm_host.h"
+#endif
+
 int8_t VSync    = 0;
 int8_t FSAA     = 0;
 
@@ -168,8 +172,13 @@ int8_t EGL_Open( void )
     }
 #endif /* defined(USE_EGL_SDL) */
 
+
     printf( "EGL Getting EGL display\n" );
+#if defined(PI)
+    g_eglDisplay = peglGetDisplay(EGL_DEFAULT_DISPLAY);
+#else
     g_eglDisplay = peglGetDisplay( (NativeDisplayType)g_Display );
+#endif
 
     if (g_eglDisplay == EGL_NO_DISPLAY)
     {
@@ -282,8 +291,64 @@ int8_t ConfigureEGL(EGLConfig config)
     #error Incorrect EGL Configuration for g_Window
 #endif /* defined(USE_EGL_RAW) */
 
+#if defined(PI)
+    static EGL_DISPMANX_WINDOW_T nativewindow;
+
+    DISPMANX_ELEMENT_HANDLE_T dispman_element;
+    DISPMANX_DISPLAY_HANDLE_T dispman_display;
+    DISPMANX_UPDATE_HANDLE_T dispman_update;
+    VC_RECT_T dst_rect;
+    VC_RECT_T src_rect;
+
+    uint32_t display_width;
+    uint32_t display_height;
+    uint32_t success = 0;
+
+    // create an EGL window surface, passing context width/height
+    success = graphics_get_display_size(0 /* LCD */, 
+                        &display_width, &display_height);
+    if ( success < 0 )
+    {
+      return EGL_FALSE;
+    }
+
+    // You can hardcode the resolution here:
+    display_width = 640;
+    display_height = 480;
+
+    dst_rect.x = 0;
+    dst_rect.y = 0;
+    dst_rect.width = display_width;
+    dst_rect.height = display_height;
+
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.width = display_width << 16;
+    src_rect.height = display_height << 16;
+
+    dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
+    dispman_update = vc_dispmanx_update_start( 0 );
+
+    dispman_element = vc_dispmanx_element_add ( dispman_update, 
+      dispman_display, 0/*layer*/, &dst_rect, 0/*src*/,
+      &src_rect, DISPMANX_PROTECTION_NONE, 0 /*alpha*/, 
+      0/*clamp*/, 0/*transform*/);
+
+    nativewindow.element = dispman_element;
+    nativewindow.width = display_width;
+    nativewindow.height = display_height;
+    vc_dispmanx_update_submit_sync( dispman_update );
+
+    /* g_eglContext->hWnd = &nativewindow; */
+
+    printf( "EGL Creating window surface\n" );
+    g_eglSurface = peglCreateWindowSurface(g_eglDisplay, config,
+                         (EGLNativeWindowType)&nativewindow, NULL);
+#else
     printf( "EGL Creating window surface\n" );
     g_eglSurface = peglCreateWindowSurface( g_eglDisplay, config, g_Window, 0 );
+#endif /* defined(USE_EGL_RAW) */
+
 
     if (g_eglSurface == EGL_NO_SURFACE)
     {

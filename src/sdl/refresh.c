@@ -65,6 +65,12 @@ XF86VidModeGamma x11_oldgamma;
 #endif
 #endif
 
+#if defined(USE_EGL_RAW)
+
+qboolean		have_stencil = false;
+
+#endif
+
 /*
  * Initialzes the SDL OpenGL context
  */
