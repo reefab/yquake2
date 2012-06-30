@@ -50,6 +50,10 @@ int fbdev = -1;
 
 #if defined(PI)
 #include "bcm_host.h"
+#include "GLES2/gl2.h"
+#include "EGL/egl.h"
+#include "EGL/eglext.h"
+
 #endif
 
 int8_t VSync    = 0;
@@ -313,8 +317,8 @@ int8_t ConfigureEGL(EGLConfig config)
     }
 
     // You can hardcode the resolution here:
-    display_width = 640;
-    display_height = 480;
+    /* display_width = 1440; */
+    /* display_height = 900; */
 
     dst_rect.x = 0;
     dst_rect.y = 0;
@@ -340,7 +344,6 @@ int8_t ConfigureEGL(EGLConfig config)
     vc_dispmanx_update_submit_sync( dispman_update );
 
     /* g_eglContext->hWnd = &nativewindow; */
-
     printf( "EGL Creating window surface\n" );
     g_eglSurface = peglCreateWindowSurface(g_eglDisplay, config,
                          (EGLNativeWindowType)&nativewindow, NULL);
@@ -369,6 +372,8 @@ int8_t ConfigureEGL(EGLConfig config)
 
     CheckEGLErrors( __FILE__, __LINE__ );
     printf( "EGL Complete\n" );
+    glClear( GL_COLOR_BUFFER_BIT );
+
     return 0;
 }
 
@@ -381,6 +386,20 @@ int8_t FindAppropriateEGLConfigs( void )
     int attrib = 0;
     EGLint ConfigAttribs[19];
 
+#if defined(PI)
+
+    ConfigAttribs[attrib++] = EGL_RED_SIZE;
+    ConfigAttribs[attrib++] = 8;
+    ConfigAttribs[attrib++] = EGL_GREEN_SIZE;
+    ConfigAttribs[attrib++] = 8;
+    ConfigAttribs[attrib++] = EGL_BLUE_SIZE;
+    ConfigAttribs[attrib++] = 8;
+    ConfigAttribs[attrib++] = EGL_ALPHA_SIZE;
+    ConfigAttribs[attrib++] = 8;
+    ConfigAttribs[attrib++] = EGL_SURFACE_TYPE;
+    ConfigAttribs[attrib++] = EGL_WINDOW_BIT;
+    ConfigAttribs[attrib++] = EGL_NONE;
+#else
     ConfigAttribs[attrib++] = EGL_RED_SIZE;
     ConfigAttribs[attrib++] = 5;
     ConfigAttribs[attrib++] = EGL_GREEN_SIZE;
@@ -408,6 +427,7 @@ int8_t FindAppropriateEGLConfigs( void )
     ConfigAttribs[attrib++] = EGL_SAMPLES;
     ConfigAttribs[attrib++] = FSAA;
     ConfigAttribs[attrib++] = EGL_NONE;
+#endif /* defined(PI) */
 
     result = peglChooseConfig( g_eglDisplay, ConfigAttribs, g_allConfigs, g_totalConfigsIn, &g_totalConfigsFound );
     if (result != EGL_TRUE || g_totalConfigsFound == 0)
@@ -469,6 +489,7 @@ void Platform_Open( void )
 void Platform_Close( void )
 {
 #if defined(PANDORA)
+
     /* Pandora VSync */
     close(fbdev);
     fbdev = -1;
@@ -478,6 +499,7 @@ void Platform_Close( void )
 void Platform_VSync( void )
 {
 #if defined(PANDORA)
+
     /* Pandora VSync */
     if ( fbdev >= 0 ) {
         int arg = 0;

@@ -181,7 +181,7 @@ endif
 ifeq ($(PI),yes)
 WITH_GLES = yes
 WITH_STATICQGL = yes
-CFLAGS += -DUSE_EGL_RAW -DUSE_VCHIQ_ARM -DUSE_GLES2 -DPI
+CFLAGS += -DUSE_EGL_RAW -DUSE_VCHIQ_ARM -DUSE_GLES2 -DPI -DEGL_VERSION_1_2
 endif
 
 # ----------
@@ -235,7 +235,7 @@ LDFLAGS := -L$(PREFIX)/DGE/lib/target -lSDL -lm -ldl
 else ifeq ($(WIZ),yes)
 LDFLAGS := -L$(PREFIX)/lib -lSDL -lm -ldl
 else ifeq ($(PI),yes)
-LDFLAGS := -L/opt/vc/lib -L/usr/lib -lm -ldl -lGLESv2 -lEGL -lvcos -lvchiq_arm -lSDL
+LDFLAGS := -L/opt/vc/lib -L/usr/lib -lm -ldl -lGLESv2 -lEGL -lvcos -lvchiq_arm -lSDL -lrt -lbcm_host -lkhrn_static -lopenmaxil -lvchostif
 else # Normal Linux
 LDFLAGS := -L/usr/lib -lm -ldl
 endif
