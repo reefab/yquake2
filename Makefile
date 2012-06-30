@@ -248,7 +248,7 @@ endif
 # Extra LDFLAGS for SDL
 ifneq ($(PANDORA),yes)
 ifneq ($(CAANOO),yes)
-ifneq ($(WIZ),yes) 
+ifneq ($(WIZ),yes)
 SDLLDFLAGS := $(shell $(PREFIX)$(TOOLS)sdl-config --libs)
 endif
 endif
@@ -604,7 +604,7 @@ OPENGL_OBJS_ += \
 	src/egl/eglport.o src/egl/in_gph.o
 else ifeq ($(PI),yes)
 OPENGL_OBJS_ += \
-	src/egl/eglport.o src/egl/in_gph.o
+	src/egl/eglport.o
 else # Normal OpenGL ES
 OPENGL_OBJS_ += \
 	src/unix/qgles.o

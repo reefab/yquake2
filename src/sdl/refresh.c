@@ -251,8 +251,8 @@ static qboolean GLimp_InitGraphics( qboolean fullscreen )
 #if defined(USE_EGL_RAW)
 	ri.Cvar_SetValue("gl_mode", 0);
 	ri.Cvar_SetValue("vid_fullscreen", 0);
-	vid.width = 320;
-	vid.height = 240;
+	vid.width = 640;
+	vid.height = 480;
 #else 
 	while (1)
 	{

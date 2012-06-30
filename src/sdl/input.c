@@ -290,7 +290,7 @@ void IN_Update(void)
 
   IN_Update_Flag = 1;
 
-#if defined(WIZ) || defined(CAANOO)
+#if defined(WIZ) || defined(CAANOO) || defined(PI)
     uint32_t key;
     uint8_t update;
     uint8_t button;
