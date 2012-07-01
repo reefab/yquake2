@@ -7,6 +7,10 @@ This is a port of the [1997 id Software Game](http://en.wikipedia.org/wiki/Quake
 This is based of the [Yamagi Quake 2 port](http://www.yamagi.org/quake2/), more
 precisely, its OpenGL ES branch.
 
+## In Action
+
+![Console](https://github.com/reefab/yquake2/raw/raspberry/stuff/photo.jpg)
+
 ## Current State
 
 Mostly playable but some graphical effects had to be disabled.
