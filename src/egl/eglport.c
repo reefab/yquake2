@@ -53,7 +53,6 @@ int fbdev = -1;
 #include "GLES2/gl2.h"
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
-static EGL_DISPMANX_WINDOW_T nativewindow;
 DISPMANX_ELEMENT_HANDLE_T dispman_element;
 DISPMANX_DISPLAY_HANDLE_T dispman_display;
 DISPMANX_UPDATE_HANDLE_T dispman_update;
@@ -105,12 +104,7 @@ void EGL_Close()
     g_eglContext = NULL;
     g_eglDisplay = NULL;
 
-#if defined(PI)
-    /* if (nativewindow != NULL) { */
-    /*     free(nativewindow); */
-    /* } */
-    /* nativewindow = NULL; */
-#elif defined(USE_EGL_RAW)
+#if defined(USE_EGL_RAW)
     if (g_Window != NULL) {
         free(g_Window);
     }
@@ -311,6 +305,8 @@ int8_t ConfigureEGL(EGLConfig config)
     }
     g_Window = (NativeWindowType)sysInfo.info.x11.window;
 #elif defined(PI)
+
+
     success = graphics_get_display_size(0 /* LCD */, 
                         &display_width, &display_height);
     if ( success < 0 )
@@ -328,6 +324,8 @@ int8_t ConfigureEGL(EGLConfig config)
 
 #if defined(PI)
     // create an EGL window surface, passing context width/height
+
+    static EGL_DISPMANX_WINDOW_T nativewindow;
 
     dst_rect.x = 0;
     dst_rect.y = 0;
@@ -352,14 +350,11 @@ int8_t ConfigureEGL(EGLConfig config)
     nativewindow.height = display_height;
     vc_dispmanx_update_submit_sync( dispman_update );
 
-    /* g_eglContext->hWnd = &nativewindow; */
     printf( "EGL Creating window surface\n" );
-    g_eglSurface = peglCreateWindowSurface(g_eglDisplay, config,
-                         (NativeWindowType)&nativewindow, NULL);
-#else
+    g_Window = &nativewindow;
+#endif
     printf( "EGL Creating window surface\n" );
     g_eglSurface = peglCreateWindowSurface( g_eglDisplay, config, g_Window, 0 );
-#endif /* defined(USE_EGL_RAW) */
 
 
     if (g_eglSurface == EGL_NO_SURFACE)
