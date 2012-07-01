@@ -24,10 +24,6 @@
  * =======================================================================
  */
 
-#if defined(PI)
-#include "bcm_host.h"
-#endif
-
 #include "header/local.h"
 
 #define NUM_BEAM_SEGS 6
@@ -1300,9 +1296,7 @@ R_SetMode ( void )
 int
 R_Init ( void *hinstance, void *hWnd )
 {
-#if defined(PI)
-   bcm_host_init();
-#endif
+
 	char renderer_buffer [ 1000 ];
 	char vendor_buffer [ 1000 ];
 	int err;

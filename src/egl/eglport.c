@@ -53,7 +53,7 @@ int fbdev = -1;
 #include "GLES2/gl2.h"
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
-
+static EGL_DISPMANX_WINDOW_T nativewindow;
 #endif
 
 int8_t VSync    = 0;
@@ -96,7 +96,12 @@ void EGL_Close()
     g_eglContext = NULL;
     g_eglDisplay = NULL;
 
-#if defined(USE_EGL_RAW)
+#if defined(PI)
+    /* if (nativewindow != NULL) { */
+    /*     free(nativewindow); */
+    /* } */
+    /* nativewindow = NULL; */
+#elif defined(USE_EGL_RAW)
     if (g_Window != NULL) {
         free(g_Window);
     }
@@ -123,6 +128,7 @@ Setup EGL context and surface
 int8_t EGL_Init( void )
 {
     int configIndex = 0;
+
 
     if (FindAppropriateEGLConfigs() != 0)
     {
@@ -258,7 +264,11 @@ int8_t ConfigureEGL(EGLConfig config)
 #endif /* defined(USE_EGL_SDL) */
 
     printf( "EGL Creating Context\n" );
+#if defined(PI)
+    g_eglContext = peglCreateContext( g_eglDisplay, config, EGL_NO_CONTEXT, s_contextAttribs );
+#else
     g_eglContext = peglCreateContext( g_eglDisplay, config, NULL, s_contextAttribs );
+#endif
 
     if (g_eglContext == EGL_NO_CONTEXT)
     {
@@ -296,7 +306,6 @@ int8_t ConfigureEGL(EGLConfig config)
 #endif /* defined(USE_EGL_RAW) */
 
 #if defined(PI)
-    static EGL_DISPMANX_WINDOW_T nativewindow;
 
     DISPMANX_ELEMENT_HANDLE_T dispman_element;
     DISPMANX_DISPLAY_HANDLE_T dispman_display;
@@ -319,6 +328,7 @@ int8_t ConfigureEGL(EGLConfig config)
     // You can hardcode the resolution here:
     /* display_width = 1440; */
     /* display_height = 900; */
+    printf("Current PI display size: %dx%d\n", display_width, display_height);
 
     dst_rect.x = 0;
     dst_rect.y = 0;
@@ -387,7 +397,6 @@ int8_t FindAppropriateEGLConfigs( void )
     EGLint ConfigAttribs[19];
 
 #if defined(PI)
-
     ConfigAttribs[attrib++] = EGL_RED_SIZE;
     ConfigAttribs[attrib++] = 8;
     ConfigAttribs[attrib++] = EGL_GREEN_SIZE;
@@ -429,7 +438,11 @@ int8_t FindAppropriateEGLConfigs( void )
     ConfigAttribs[attrib++] = EGL_NONE;
 #endif /* defined(PI) */
 
+#if defined(PI)
+    result = eglSaneChooseConfigBRCM( g_eglDisplay, ConfigAttribs, g_allConfigs, 1, &g_totalConfigsFound );
+#else
     result = peglChooseConfig( g_eglDisplay, ConfigAttribs, g_allConfigs, g_totalConfigsIn, &g_totalConfigsFound );
+#endif
     if (result != EGL_TRUE || g_totalConfigsFound == 0)
     {
         CheckEGLErrors( __FILE__, __LINE__ );

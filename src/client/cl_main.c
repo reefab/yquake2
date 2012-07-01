@@ -27,6 +27,11 @@
 
 #include "header/client.h"
 
+#if defined(PI)
+#include "bcm_host.h"
+#endif
+
+
 void CL_ForwardToServer_f (void);
 void CL_Changing_f (void);
 void CL_Reconnect_f (void);
@@ -780,6 +785,10 @@ void CL_Frame (int msec)
 
 void CL_Init (void)
 {
+#if defined(PI)
+    printf("Init PI BCM system\n");
+    bcm_host_init();
+#endif
 	if (dedicated->value)
 		return; /* nothing running on the client */
 
