@@ -404,7 +404,11 @@ void GLimp_Shutdown( void )
 	}
 #endif
 
-#if !defined(PANDORA) && !defined(USE_EGL_RAW) 
+#if defined(PI)
+		SDL_Quit();
+#endif
+
+#if !defined(PANDORA) && !defined(USE_EGL_RAW)
 #ifdef X11GAMMA
 	if (gl_state.hwgamma == true)
 	{
