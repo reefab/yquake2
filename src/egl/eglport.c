@@ -104,7 +104,7 @@ void EGL_Close()
     g_eglContext = NULL;
     g_eglDisplay = NULL;
 
-#if defined(USE_EGL_RAW)
+#if defined(USE_EGL_RAW) && !defined(PI)
     if (g_Window != NULL) {
         free(g_Window);
     }
@@ -114,6 +114,8 @@ void EGL_Close()
         XCloseDisplay(g_Display);
     }
     g_Display = NULL;
+#elif defined(PI)
+    printf("Closing PI Display...");
 #else
     #error Incorrect EGL Configuration
 #endif /* defined(USE_EGL_RAW) */
@@ -340,9 +342,15 @@ int8_t ConfigureEGL(EGLConfig config)
     dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
     dispman_update = vc_dispmanx_update_start( 0 );
 
+    VC_DISPMANX_ALPHA_T         dispman_alpha;
+
+    dispman_alpha.flags = DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS; 
+    dispman_alpha.opacity = 0xFF; 
+    dispman_alpha.mask = NULL; 
+
     dispman_element = vc_dispmanx_element_add ( dispman_update, 
       dispman_display, 0/*layer*/, &dst_rect, 0/*src*/,
-      &src_rect, DISPMANX_PROTECTION_NONE, 0 /*alpha*/, 
+      &src_rect, DISPMANX_PROTECTION_NONE, &dispman_alpha /*alpha*/, 
       0/*clamp*/, 0/*transform*/);
 
     nativewindow.element = dispman_element;
@@ -353,6 +361,7 @@ int8_t ConfigureEGL(EGLConfig config)
     printf( "EGL Creating window surface\n" );
     g_Window = &nativewindow;
 #endif
+
     printf( "EGL Creating window surface\n" );
     g_eglSurface = peglCreateWindowSurface( g_eglDisplay, config, g_Window, 0 );
 
@@ -377,6 +386,7 @@ int8_t ConfigureEGL(EGLConfig config)
     CheckEGLErrors( __FILE__, __LINE__ );
     printf( "EGL Complete\n" );
     glClear( GL_COLOR_BUFFER_BIT );
+    glEnable(GL_DEPTH_TEST);
 
     return 0;
 }
@@ -401,6 +411,10 @@ int8_t FindAppropriateEGLConfigs( void )
     ConfigAttribs[attrib++] = 8;
     ConfigAttribs[attrib++] = EGL_SURFACE_TYPE;
     ConfigAttribs[attrib++] = EGL_WINDOW_BIT;
+    ConfigAttribs[attrib++] = EGL_DEPTH_SIZE;
+    ConfigAttribs[attrib++] = 24;
+    ConfigAttribs[attrib++] = EGL_RENDERABLE_TYPE;
+    ConfigAttribs[attrib++] = EGL_OPENGL_ES2_BIT;
     ConfigAttribs[attrib++] = EGL_NONE;
 #else
     ConfigAttribs[attrib++] = EGL_RED_SIZE;
@@ -491,6 +505,10 @@ void Platform_Open( void )
       printf( "EGL Couldn't open /dev/fb0 for vsync\n" );
     }
 #endif /* defined(PANDORA) */
+#if defined(PI)
+    printf("DeInit PI BCM system\n");
+    bcm_host_init();
+#endif
 }
 
 void Platform_Close( void )
@@ -501,6 +519,10 @@ void Platform_Close( void )
     close(fbdev);
     fbdev = -1;
 #endif /* defined(PANDORA) */
+#if defined(PI)
+    printf("Init PI BCM system\n");
+    bcm_host_deinit();
+#endif
 }
 
 void Platform_VSync( void )
