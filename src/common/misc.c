@@ -28,6 +28,10 @@
 #include "header/zone.h"
 #include <setjmp.h>
 
+#if defined(PI)
+#include "bcm_host.h"
+#endif
+
 FILE	*log_stats_file;
 cvar_t	*host_speeds;
 cvar_t	*log_stats;
@@ -183,6 +187,12 @@ void Com_Error_f (void)
 
 void Qcommon_Init (int argc, char **argv)
 {
+#if defined(PI) 
+#ifndef DEDICATED_ONLY
+    printf("Init PI BCM system\n");
+    bcm_host_init();
+#endif
+#endif
 	char	*s;
 
 	if (setjmp (abortframe) )

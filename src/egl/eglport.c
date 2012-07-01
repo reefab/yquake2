@@ -54,6 +54,15 @@ int fbdev = -1;
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
 static EGL_DISPMANX_WINDOW_T nativewindow;
+DISPMANX_ELEMENT_HANDLE_T dispman_element;
+DISPMANX_DISPLAY_HANDLE_T dispman_display;
+DISPMANX_UPDATE_HANDLE_T dispman_update;
+VC_RECT_T dst_rect;
+VC_RECT_T src_rect;
+
+uint32_t display_width;
+uint32_t display_height;
+uint32_t success = 0;
 #endif
 
 int8_t VSync    = 0;
@@ -277,7 +286,7 @@ int8_t ConfigureEGL(EGLConfig config)
         return 1;
     }
 
-#if defined(USE_EGL_RAW)
+#if defined(USE_EGL_RAW) && !defined(PI)
     if (g_Window == NULL) {
         g_Window = (NativeWindowType)malloc(16*1024);
 
@@ -301,23 +310,7 @@ int8_t ConfigureEGL(EGLConfig config)
         return 1;
     }
     g_Window = (NativeWindowType)sysInfo.info.x11.window;
-#else
-    #error Incorrect EGL Configuration for g_Window
-#endif /* defined(USE_EGL_RAW) */
-
-#if defined(PI)
-
-    DISPMANX_ELEMENT_HANDLE_T dispman_element;
-    DISPMANX_DISPLAY_HANDLE_T dispman_display;
-    DISPMANX_UPDATE_HANDLE_T dispman_update;
-    VC_RECT_T dst_rect;
-    VC_RECT_T src_rect;
-
-    uint32_t display_width;
-    uint32_t display_height;
-    uint32_t success = 0;
-
-    // create an EGL window surface, passing context width/height
+#elif defined(PI)
     success = graphics_get_display_size(0 /* LCD */, 
                         &display_width, &display_height);
     if ( success < 0 )
@@ -329,6 +322,12 @@ int8_t ConfigureEGL(EGLConfig config)
     /* display_width = 1440; */
     /* display_height = 900; */
     printf("Current PI display size: %dx%d\n", display_width, display_height);
+#else
+    #error Incorrect EGL Configuration for g_Window
+#endif /* defined(USE_EGL_RAW) */
+
+#if defined(PI)
+    // create an EGL window surface, passing context width/height
 
     dst_rect.x = 0;
     dst_rect.y = 0;
@@ -356,7 +355,7 @@ int8_t ConfigureEGL(EGLConfig config)
     /* g_eglContext->hWnd = &nativewindow; */
     printf( "EGL Creating window surface\n" );
     g_eglSurface = peglCreateWindowSurface(g_eglDisplay, config,
-                         (EGLNativeWindowType)&nativewindow, NULL);
+                         (NativeWindowType)&nativewindow, NULL);
 #else
     printf( "EGL Creating window surface\n" );
     g_eglSurface = peglCreateWindowSurface( g_eglDisplay, config, g_Window, 0 );
