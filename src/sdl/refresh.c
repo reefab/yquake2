@@ -248,12 +248,14 @@ static qboolean GLimp_InitGraphics( qboolean fullscreen )
 	SetSDLIcon();
 #endif
 
-#if defined(USE_EGL_RAW)
+#if defined(PI)
+    printf("PI Video mode");
+#elif defined(USE_EGL_RAW)
 	ri.Cvar_SetValue("gl_mode", 0);
 	ri.Cvar_SetValue("vid_fullscreen", 0);
 	vid.width = 640;
 	vid.height = 480;
-#else 
+#else
 	while (1)
 	{
 		if ((surface = SDL_SetVideoMode(vid.width, vid.height, 0, flags)) == NULL) 
