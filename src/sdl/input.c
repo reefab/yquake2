@@ -513,6 +513,9 @@ IN_BackendInit ( in_state_t *in_state_p )
 
 	mouse_x = mouse_y = 0.0;
 
+#if defined(PI)
+    SDL_Surface *surface = SDL_SetVideoMode(0,0, 32, SDL_SWSURFACE);
+#endif
 	/* SDL stuff */
 	SDL_EnableUNICODE( 0 );
     SDL_EnableKeyRepeat( SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL );
