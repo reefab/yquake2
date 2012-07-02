@@ -39,6 +39,12 @@
 typedef unsigned char byte;
 typedef enum {false, true}  qboolean;
 
+#if defined(PI)
+#define sin(f) sinf(f)
+#define cos(f) cosf(f)
+#endif
+
+
 #ifndef NULL
  #define NULL ((void *)0)
 #endif
