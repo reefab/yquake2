@@ -32,6 +32,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define GLclampd GLclampf
 #endif
 
+#if defined(PI)
+extern void myglClear(GLbitfield mask);
+#endif
+
 extern void ( APIENTRY *qglSelectTextureSGIS )( GLenum );
 extern void ( APIENTRY *qglMTexCoord2fSGIS )( GLenum, GLfloat, GLfloat );
 extern void ( APIENTRY *qglColorTableEXT )( GLenum, GLenum, GLsizei, GLenum, GLenum, const GLvoid * );
@@ -71,7 +75,11 @@ extern void QGL_Shutdown ( void );
 #define qglBlendFunc glBlendFunc
 #define qglCallList glCallList
 #define qglCallLists glCallLists
+#if defined(PI)
+#define qglClear myglClear
+#else
 #define qglClear glClear
+#endif
 #define qglClearAccum glClearAccum
 #define qglClearColor glClearColor
 #define qglClearDepth glClearDepth

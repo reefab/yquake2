@@ -536,3 +536,15 @@ void Platform_VSync( void )
     }
 #endif /* defined(PANDORA) */
 }
+
+#if defined(PI)
+static int firstclear = 1;
+
+void myglClear(GLbitfield mask)
+{
+   if (firstclear) {
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      firstclear = 0;
+   }
+}
+#endif
