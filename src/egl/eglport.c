@@ -402,17 +402,19 @@ int8_t FindAppropriateEGLConfigs( void )
 
 #if defined(PI)
     ConfigAttribs[attrib++] = EGL_RED_SIZE;
-    ConfigAttribs[attrib++] = 8;
+    ConfigAttribs[attrib++] = 5;
     ConfigAttribs[attrib++] = EGL_GREEN_SIZE;
-    ConfigAttribs[attrib++] = 8;
+    ConfigAttribs[attrib++] = 6;
     ConfigAttribs[attrib++] = EGL_BLUE_SIZE;
-    ConfigAttribs[attrib++] = 8;
+    ConfigAttribs[attrib++] = 5;
     ConfigAttribs[attrib++] = EGL_ALPHA_SIZE;
-    ConfigAttribs[attrib++] = 8;
+    ConfigAttribs[attrib++] = 0;
     ConfigAttribs[attrib++] = EGL_SURFACE_TYPE;
     ConfigAttribs[attrib++] = EGL_WINDOW_BIT;
     ConfigAttribs[attrib++] = EGL_DEPTH_SIZE;
-    ConfigAttribs[attrib++] = 24;
+    ConfigAttribs[attrib++] = 16;
+    ConfigAttribs[attrib++] = EGL_STENCIL_SIZE;
+    ConfigAttribs[attrib++] = 0;
     ConfigAttribs[attrib++] = EGL_RENDERABLE_TYPE;
     ConfigAttribs[attrib++] = EGL_OPENGL_ES2_BIT;
     ConfigAttribs[attrib++] = EGL_NONE;

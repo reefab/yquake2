@@ -94,6 +94,10 @@ WIZ := no
 # Raspberry PI
 PI := yes
 
+# if you are using Raspbian or another distribution with hardware 
+# floating point support, set that to yes
+HARDFLOAT := yes
+
 # ------------------------------------------------------ #
 
 # Those variables can be filled to configure the build
@@ -181,7 +185,15 @@ endif
 ifeq ($(PI),yes)
 WITH_GLES = yes
 WITH_STATICQGL = yes
-CFLAGS += -mtune=arm1176jzf-s -mfpu=vfp -mfloat-abi=softfp -DUSE_EGL_RAW -DUSE_VCHIQ_ARM -DUSE_GLES2 -DPI -DEGL_VERSION_1_2
+CFLAGS += -mtune=arm1176jzf-s -mfpu=vfp  -DUSE_EGL_RAW -DUSE_VCHIQ_ARM -DUSE_GLES2 -DPI -DEGL_VERSION_1_2
+
+
+endif
+
+ifeq ($(HARDFLOAT), yes)
+CFLAGS += -mfloat-abi=hard
+else
+CFLAGS += -mfloat-abi=softfp
 endif
 
 # ----------
