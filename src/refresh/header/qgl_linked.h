@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #if defined(PI)
 extern void myglClear(GLbitfield mask);
+extern void myglTexImage2D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
 #endif
 
 extern void ( APIENTRY *qglSelectTextureSGIS )( GLenum );
@@ -77,8 +78,15 @@ extern void QGL_Shutdown ( void );
 #define qglCallLists glCallLists
 #if defined(PI)
 #define qglClear myglClear
+#define qglClearDepth glClearDepthf
+#define qglClipPlane glClipPlanef
+#define qglDepthRange glDepthRangef
+#define qglTexImage2D glTexImage2D
 #else
 #define qglClear glClear
+#define qglClearDepth glClearDepth
+#define qglClipPlane glClipPlane
+#define qglDepthRange glDepthRange
 #endif
 #define qglClearAccum glClearAccum
 #define qglClearColor glClearColor

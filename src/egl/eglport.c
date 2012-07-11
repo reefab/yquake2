@@ -417,6 +417,8 @@ int8_t FindAppropriateEGLConfigs( void )
     ConfigAttribs[attrib++] = 0;
     ConfigAttribs[attrib++] = EGL_RENDERABLE_TYPE;
     ConfigAttribs[attrib++] = EGL_OPENGL_ES2_BIT;
+    ConfigAttribs[attrib++] = EGL_SAMPLE_BUFFERS;
+    ConfigAttribs[attrib++] = 1;
     ConfigAttribs[attrib++] = EGL_NONE;
 #else
     ConfigAttribs[attrib++] = EGL_RED_SIZE;
@@ -549,4 +551,26 @@ void myglClear(GLbitfield mask)
       firstclear = 0;
    }
 }
+
+void myglTexImage2D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
+{
+   static int opaque = 0;
+
+   if (format == GL_RGB && type == GL_UNSIGNED_BYTE) {
+      assert(level == 0);
+      opaque = 1;
+
+      etc1_compress_tex_image(target, level, format, width, height, border, format, type, pixels);
+   } else if (format == GL_RGBA && type == GL_UNSIGNED_BYTE) {
+      if (level == 0)
+         opaque = isopaque(width, height, pixels);
+
+      if (opaque)
+         etc1_compress_tex_image(target, level, format, width, height, border, format, type, pixels);
+      else
+         rgba4444_convert_tex_image(target, level, format, width, height, border, format, type, pixels);
+   } else
+      assert(0);
+}
+
 #endif
