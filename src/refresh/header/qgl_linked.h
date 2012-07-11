@@ -78,15 +78,10 @@ extern void QGL_Shutdown ( void );
 #define qglCallLists glCallLists
 #if defined(PI)
 #define qglClear myglClear
-#define qglClearDepth glClearDepthf
-#define qglClipPlane glClipPlanef
-#define qglDepthRange glDepthRangef
-#define qglTexImage2D glTexImage2D
+#define qglTexImage2D myglTexImage2D
 #else
 #define qglClear glClear
-#define qglClearDepth glClearDepth
-#define qglClipPlane glClipPlane
-#define qglDepthRange glDepthRange
+#define qglTexImage2D glTexImage2D
 #endif
 #define qglClearAccum glClearAccum
 #define qglClearColor glClearColor
@@ -373,7 +368,7 @@ extern void QGL_Shutdown ( void );
 #define qglTexGeni glTexGeni
 #define qglTexGeniv glTexGeniv
 #define qglTexImage1D glTexImage1D
-#define qglTexImage2D glTexImage2D
+// #define qglTexImage2D glTexImage2D
 #define qglTexParameterf glTexParameterf
 #define qglTexParameterfv glTexParameterfv
 #define qglTexParameteri glTexParameteri
