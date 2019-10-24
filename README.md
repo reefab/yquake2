@@ -20,7 +20,9 @@ This is based off the [Yamagi Quake 2 port](http://www.yamagi.org/quake2/), more
 
 ## Current Status
 
-The demo and full versions are playable but some graphical effects had to be disabled.
+~~The demo and full versions are playable but some graphical effects had to be disabled.~~
+
+This is not working on modern Raspberry Pi or modern raspbian. This repository is for historic purposes only.
 
 ## Caveats
 
